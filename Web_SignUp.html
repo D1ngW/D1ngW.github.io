@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>网站注册</title>
+    <link rel="stylesheet" href="/css/sign.css">
+</head>
+<body>
+    <header>
+        <div class="header-a1">
+            <a href="Web_SignUp.html" class="header_a-a1">注册</a>
+            <a href="Web_SignIn.html" class="header_a-a1">登录</a>
+        </div>
+    </header>
+    <div>
+        <form action="" class="form-a1" id="signUp" autocomplete="off">
+            <input type="text" id="account" placeholder="请输入账号名称" class="input-a1" required>
+            <br><br>
+            <input type="email" id="email" placeholder="请输入邮箱地址" class="input-a1" required>
+            <br><br>
+            <input type="password" id="password" placeholder="请输入密码" class="input-a1" required>
+            <br><span class="para-tiny1">6位以上，可使用英文及数字组合</span>
+            <br>
+            <input type="password" id="password2" placeholder="请再次输入密码" class="input-a1" required>
+            <!-- <br><span class="para-tiny1">两次输入的密码不符</span> -->
+            <br><br>
+            <input type="submit" value="注册" class="submit-a1">
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('signUp').addEventListener('submit', function(event) {
+            event.preventDefault(); // 防止表单默认提交行为
+
+            // 获取表单数据
+            const formData = {
+                account: document.getElementById('account').value,
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value,
+            };
+
+            // 使用Fetch API发送POST请求
+            fetch('http://10.196.23.150:3000/api/data', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ account, email, password })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('成功:', data);
+            })
+            .catch(error => {
+                console.error('请求失败:', error);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>网站登录</title>
+    <link rel="stylesheet" href="/css/sign.css">
+</head>
+<body>
+    <header>
+        <div class="header-a1">
+            <a href="Web_SignUp.html" class="header_a-a1">注册</a>
+            <a href="Web_SignIn.html" class="header_a-a1">登录</a>
+        </div>
+    </header>
+    <div>
+        <form class="form-a1" id="signIn" autocomplete="on">
+            <input type="text" placeholder="请输入邮箱或账号" class="input-a1" id="account" required>
+            <br><br>
+            <input type="password" placeholder="请输入密码" class="input-a1" id="password" required>
+            <br><br>
+            <input type="submit" value="登录" class="submit-a1" required>
+        </form>
+        <p id="message"></p>
+    </div>
+
+    <script>
+        document.getElementById('signIn').addEventListener('submit', function(event) {
+            event.preventDefault(); // 防止表单默认提交行为
+            
+            console.log(document.getElementById('account').value);
+            console.log(document.getElementById('password').value);
+            // 获取表单数据
+            const formData = {
+                account: document.getElementById('account').value,
+                password: document.getElementById('password').value
+            };
+
+            // 使用Fetch API发送POST请求
+            // fetch('http://10.196.23.150:3000/submit', {
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/json'
+            //     },
+            //     body: JSON.stringify({ account, password })
+            // })
+            // .then(response => response.json())
+            // .then(data => {
+            //     // 处理后端返回的响应
+            //     if (data.success) {
+            //         // 登录成功
+            //         document.getElementById('message').textContent = '登录成功！';
+            //         // 可以重定向到其他页面或更新UI
+            //         window.location.href = '/dashboard';
+            //     } else {
+            //         // 登录失败
+            //         document.getElementById('message').textContent = '登录失败: ' + data.message;
+            //     }
+            // })
+            // .catch(error => {
+            //     console.error('请求失败:', error);
+            //     alert("Post failed");
+            // });
+fetch('http://10.196.23.150:3000/submit', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(formData)
+})
+.then(response => response.text().then(text => {
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}: ${text}`);
+  }
+  return { text, response };
+}))
+.then(({ text, response }) => {
+  try {
+    const data = JSON.parse(text);
+    if (data.success) {
+      document.getElementById('message').textContent = '登录成功！';
+      window.location.href = '/dashboard';
+    } else {
+      document.getElementById('message').textContent = '登录失败: ' + data.message;
+    }
+  } catch (error) {
+    console.error('JSON 解析失败:', error, '原始内容:', text);
+    throw new Error('服务器返回了无效的 JSON');
+  }
+})
+.catch(error => {
+  console.error('请求失败:', error);
+  alert(`请求失败: ${error.message}`);
+});
+            
+            
+        });
+    </script>
+</body>
+</html>

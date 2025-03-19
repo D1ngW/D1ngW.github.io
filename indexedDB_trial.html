@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>indexedDB数据库的调配</title>
+</head>
+<body>
+    <div>
+        <input type="text" id="search-input">
+        <br>
+        <button onclick="search()">查询</button>
+        <p id="search-find">
+        </p>
+    </div>
+
+//
+    <script>
+
+        //数据库的相关操作都是异步的，打开、读取和编辑、删除，都需要时间处理，并不是马上执行结束，所以每一个对数据库的相关操作都有回调事件进行监听
+        //indexDB是一个最大的数据对象（object）【同一个域名下indexDB是同一个】
+        //它内部包含了很多数据库（object）
+        //每个数据库内又有很多存储对象表（array）以及相对应的唯一标识符（key）
+        //每个对象表内又有很多键值对（object）
+
+
+        const request = indexedDB.open("Database-R1",1);
+
+        //.onsuccess：打开成功
+        //.onerror：打开失败
+        //.onupgradeneeded：更新版本
+
+        //这里解释一下版本号，一个 数据库在打开时，若没有这个库，则会新建，默认版本号为1；若有，打开时的版本号比原本保存的版本号更高，则会更新这个库，同时触发upgradeneeded事件，一个数据库的版本号只会越来越高，不会出现还原旧版本的情况，这是因为有些特定的操作只能在版本更新时执行（upgradeneeded事件）--- 例如，新建、编辑、删除一个对象存储表【不是新建删除数据！】
+
+        request.onerror = function(event) {
+            console.error('数据库打开报错');
+        }
+
+        //对对象存储表进行操作需要在upgradeneeded事件中进行！否则无效
+        request.onupgradeneeded = function(event) {
+            const db = event.target.result;
+            console.log('数据库需要升级');
+
+            //创建对象存储表的方法： .createObjectStore('name', { keypath: 'keyName', autoIncrement: true/false })
+            //其中name是对象存储表的名称，后续执行事务需要
+            //keypath是检索对象时使用的关键字，如果autoIncrement为true则自动生成新存储的对象的键，键是一个不断递增的数字（1,2,3，……）
+            db.createObjectStore('memberTable', { keyPath: 'id'})
+            db.onsuccess = function (event) {
+            console.log('对象存储表创建成功');
+            }
+        }
+
+        //添加和读取数据都在oncuccess的回调中执行，不需要更新版本
+        request.onsuccess = function(event) {
+            const db = event.target.result;
+            console.log('数据库打开成功');
+
+            //链接数据库的表，并获取读写权限，默认为readonly（只读）
+            //常量transaction就是字面意思【一项业务】，常量objectStore则是transaction事务所操作的存储表
+            const transaction = db.transaction(['memberTable'], 'readwrite');
+            const objectStore = transaction.objectStore('memberTable');
+
+            //添加数据，对所操作的存储表进行add方法
+            //put
+            const data = objectStore.add({
+                id: '0',
+                name: 'test',
+                task: 'none',
+                state: 'none'
+            });
+            //由于添加数据是一项异步操作，所以要通过回调等待结果
+            data.onsuccess = function (event) {
+                console.log('数据添加成功');
+            }
+        }
+
+        function search() {
+            const search_request = indexedDB.open("Database-R1");
+            
+            search_request.onerror = function(event) {
+                console.error('数据库打开报错');
+            }
+            search_request.onsuccess = function(event) {
+                const db = event.target.result;
+                console.log('数据打开成功');
+                const search_transaction = db.transaction(['memberTable'], 'readonly');
+                const search_objectStore = search_transaction.objectStore('memberTable');
+
+                const search_input = document.getElementById('search-input') .values;
+                const search_data = search_objectStore.get(search_input);
+                search_data.onsuccess = function (event) {
+                    console.log(search_data.result);
+                }
+            }
+        }
+
+        function delete_data() {
+            const delete_request = indexedDB.open("Database-R1");
+        }
+
+
+    </script>
+</body>
+</html>
