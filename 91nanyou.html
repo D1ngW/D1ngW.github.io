@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>同 城 男 优 在 线 上 门</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+    #countdown {
+      font-size: 24px;
+      color: red;
+      margin-top: 20px;
+    }
+    #video-container {
+      display: none; /* 初始隐藏视频 */
+      margin-top: 20px;
+    }
+    video {
+      width: 100%;
+      max-width: 600px;
+      height: auto;
+    }
+  </style>
+</head>
+<body>
+  <h1 style="font-size: 32px;">正在寻找合适的男优</h1>
+  <p id="countdown0">预计用时： </p><span id="countdown">5</span>
+  <div id="video-container">
+    <video id="video" controls autoplay>
+      <source src="/resource/nanyou2.mp4" type="video/mp4">
+      您的浏览器不支持视频播放。
+    </video>
+  </div>
+  <div class="autoplay-img1" style="height:5rem;"><img src="/resource/wd5.jpg" alt="" style="height:5rem;"></div>
+
+  <script>
+    // 1. 获取元素
+    const countdownElement = document.getElementById("countdown");
+    const videoContainer = document.getElementById("video-container");
+    const videoElement = document.getElementById("video");
+
+    // 2. 设置倒计时时间（10秒）
+    let timeLeft = 5;
+
+    // 3. 更新倒计时
+    function updateCountdown() {
+      countdownElement.textContent = timeLeft;
+
+      if (timeLeft <= 0) {
+        // 倒计时结束
+        countdownElement.textContent = "已为您匹配到男优！匹配度为100%！";
+        videoContainer.style.display = "block"; // 显示视频
+        videoElement.play(); // 自动播放视频
+        clearInterval(interval); // 停止倒计时
+        document.getElementsByClassName('autoplay-img1')[0].innerHTML = "";
+        document.getElementById('countdown0').innerHTML = "";
+        return;
+      }
+      if (timeLeft == 4) {
+        document.getElementsByClassName('autoplay-img1')[0].innerHTML = "<img src=\"/resource/wd4.jpg\" style=\"height:5rem;\" >"
+      }
+      if (timeLeft == 3) {
+        document.getElementsByClassName('autoplay-img1')[0].innerHTML = "<img src=\"/resource/wd3.jpg\" style=\"height:5rem;\">"
+      }
+      if (timeLeft == 2) {
+        document.getElementsByClassName('autoplay-img1')[0].innerHTML = "<img src=\"/resource/wd2.jpg\" style=\"height:5rem;\">"
+      }
+      if (timeLeft == 1) {
+        document.getElementsByClassName('autoplay-img1')[0].innerHTML = "<img src=\"/resource/wd1.jpg\" style=\"height:5rem;\">"
+      }
+      timeLeft--; // 减少时间
+    }
+
+    // 初始调用
+    updateCountdown();
+
+    // 每秒更新一次倒计时
+    const interval = setInterval(updateCountdown, 1000);
+    function resetHtmlFontSize(){
+        document.documentElement.style.fontSize = screen.width / 10 + 'px'
+    }
+    resetHtmlFontSize();
+    window.onresize = resetHtmlFontSize;
+
+  </script>
+</body>
+</html>
